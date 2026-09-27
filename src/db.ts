@@ -1,5 +1,5 @@
 import { Database } from "bun:sqlite";
-import type { Agent, Task, Bid, Escrow, Transaction } from "./types";
+import type { Agent, Task, Bid, Escrow, Transaction, TaskStatus } from "./types";
 
 export class EconomyDB {
   private db: Database;
@@ -95,7 +95,7 @@ export class EconomyDB {
   saveTask(task: Task) {
     this.db.run(
       "INSERT OR REPLACE INTO tasks (id, creatorId, workerId, title, description, budget, status, deadline, createdAt, completedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [task.id, task.creatorId, task.workerId, task.title, task.description, task.budget, task.status, task.deadline, task.createdAt, task.completedAt]
+      [task.id, task.creatorId, task.workerId ?? null, task.title, task.description, task.budget, task.status, task.deadline, task.createdAt, task.completedAt ?? null]
     );
   }
 
@@ -137,7 +137,7 @@ export class EconomyDB {
   saveTransaction(tx: Transaction) {
     this.db.run(
       "INSERT INTO transactions (id, fromId, toId, amount, type, relatedId, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [tx.id, tx.fromId, tx.toId, tx.amount, tx.type, tx.relatedId, tx.createdAt]
+      [tx.id, tx.fromId, tx.toId, tx.amount, tx.type, tx.relatedId ?? null, tx.createdAt]
     );
   }
 }
